@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive map showing dengue case time series per country.">
+    <title>Dengue Cases Dashboard</title>
+    <!-- Link to styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet.js for the map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <!-- Chart.js for time series chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Dengue Cases Dashboard</h1>
+        <p>Explore dengue case trends around the world with an interactive map and time series visualization.</p>
+    </header>
+
+    <!-- Main content -->
+    <main>
+        <!-- Map container -->
+        <section id="map-section">
+            <h2>Global Dengue Map</h2>
+            <div id="map" style="height: 500px;"></div>
+        </section>
+
+        <!-- Chart container -->
+        <section id="chart-section">
+            <h2>Time Series of Dengue Cases</h2>
+            <canvas id="timeSeriesChart" width="400" height="200"></canvas>
+        </section>
+
+        <!-- Filters and controls -->
+        <section id="controls-section">
+            <h3>Filters</h3>
+            <label for="country-select">Select Country:</label>
+            <select id="country-select">
+                <option value="">All Countries</option>
+            </select>
+
+            <label for="time-slider">Select Time Range:</label>
+            <input type="range" id="time-slider" min="2020" max="2025" value="2025">
+            <span id="time-value">2025</span>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Dengue Dashboard | Built with ❤️ using Leaflet.js and Chart.js</p>
+    </footer>
+
+    <!-- Link to JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
+
