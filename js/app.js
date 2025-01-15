@@ -2,6 +2,31 @@
 var map = L.map('map').setView([0, 0], 2); // Centered at the equator
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+// Initialize the time-series chart using Chart.js
+var ctx = document.getElementById('timeSeriesChart').getContext('2d');
+var timeSeriesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [], // Years will be added dynamically
+        datasets: [{
+            label: 'Total Cases Across All Countries',
+            data: [],  // Total cases for each year will be added dynamically
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom'
+            }
+        }
+    }
+});
+
 // Fetch and display data
 var markers = {};
 fetch('data/dengue_cases.json')
@@ -15,6 +40,26 @@ fetch('data/dengue_cases.json')
             markers[country.name] = { marker: marker, cases: country.cases };
         });
     });
+
+// Function to update the time-series chart
+function updateTimeSeriesChart(casesByYear) {
+    // Update chart labels and data
+    for (var year in casesByYear) {
+        timeSeriesChart.data.labels.push(year);
+        timeSeriesChart.data.datasets[0].data.push(casesByYear[year]);
+    }
+    // Update the chart
+    timeSeriesChart.update();
+}
+
+var totalCasesByYear = {};
+for (var markerId in markers) {
+    for (var year in markers[markerId].cases) {
+        totalCasesByYear[year] = (totalCasesByYear[year] || 0) + markers[markerId].cases[year];
+    }
+}
+
+updateTimeSeriesChart(totalCasesByYear);
 
 // Time slider interactivity
 const timeSlider = document.getElementById('time-slider');
