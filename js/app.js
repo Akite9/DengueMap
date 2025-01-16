@@ -27,6 +27,22 @@ var timeSeriesChart = new Chart(ctx, {
     }
 });
 
+function updateTimeSeriesChart(casesByYear) {
+    // Reset chart data
+    timeSeriesChart.data.labels = [];
+    timeSeriesChart.data.datasets[0].data = [];
+
+    // Sort years and update labels and data
+    const sortedYears = Object.keys(casesByYear).sort((a, b) => a - b);
+    sortedYears.forEach(year => {
+        timeSeriesChart.data.labels.push(year);
+        timeSeriesChart.data.datasets[0].data.push(casesByYear[year]);
+    });
+
+    // Update the chart
+    timeSeriesChart.update();
+}
+
 // Fetch and display data
 var markers = {};
 fetch('data/dengue_cases.json')
@@ -36,30 +52,20 @@ fetch('data/dengue_cases.json')
         data.forEach(country => {
             var marker = L.marker([country.lat, country.lon]).addTo(map);
             marker.bindPopup(`<strong>${country.name}</strong><br>Cases: ${country.cases[2025]}`);
-            // Store the marker in the `markers` object using country name
             markers[country.name] = { marker: marker, cases: country.cases };
         });
+
+        // Calculate totalCasesByYear AFTER markers are populated
+        var totalCasesByYear = {};
+        for (var country in markers) {
+            for (var year in markers[country].cases) {
+                totalCasesByYear[year] = (totalCasesByYear[year] || 0) + markers[country].cases[year];
+            }
+        }
+
+        // Update the time-series chart
+        updateTimeSeriesChart(totalCasesByYear);
     });
-
-// Function to update the time-series chart
-function updateTimeSeriesChart(casesByYear) {
-    // Update chart labels and data
-    for (var year in casesByYear) {
-        timeSeriesChart.data.labels.push(year);
-        timeSeriesChart.data.datasets[0].data.push(casesByYear[year]);
-    }
-    // Update the chart
-    timeSeriesChart.update();
-}
-
-var totalCasesByYear = {};
-for (var markerId in markers) {
-    for (var year in markers[markerId].cases) {
-        totalCasesByYear[year] = (totalCasesByYear[year] || 0) + markers[markerId].cases[year];
-    }
-}
-
-updateTimeSeriesChart(totalCasesByYear);
 
 // Time slider interactivity
 const timeSlider = document.getElementById('time-slider');
