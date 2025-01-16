@@ -13,6 +13,7 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <!-- Chart.js for time series chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
 <body>
     <!-- Header -->
@@ -32,7 +33,7 @@
         <!-- Chart container -->
         <section id="chart-section">
             <h2>Time Series of Dengue Cases</h2>
-            <canvas id="timeSeriesChart"></canvas>
+            <canvas id="timeSeriesChart" style="max-width: 500px; max-height: 400px;"></canvas>
         </section>
 
         <!-- Filters and controls -->

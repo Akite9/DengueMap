@@ -20,8 +20,24 @@ var timeSeriesChart = new Chart(ctx, {
         responsive: true,
         scales: {
             x: {
-                type: 'linear',
-                position: 'bottom'
+                type: 'time', // Use 'time' for a time-based x-axis
+                time: {
+                    unit: 'year', // Format as years
+                    tooltipFormat: 'yyyy', // Tooltip format
+                    displayFormats: {
+                        year: 'yyyy' // Display only years on the axis
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Year'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Total Cases'
+                }
             }
         }
     }
@@ -35,7 +51,7 @@ function updateTimeSeriesChart(casesByYear) {
     // Sort years and update labels and data
     const sortedYears = Object.keys(casesByYear).sort((a, b) => a - b);
     sortedYears.forEach(year => {
-        timeSeriesChart.data.labels.push(year);
+        timeSeriesChart.data.labels.push(`${year}-01-01`); // Convert year to a valid date
         timeSeriesChart.data.datasets[0].data.push(casesByYear[year]);
     });
 
