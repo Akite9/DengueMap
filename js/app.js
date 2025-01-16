@@ -71,15 +71,14 @@ fetch('data/dengue_cases.json')
             var marker = L.marker([country.lat, country.lon]).addTo(map);
             marker.bindPopup(`<strong>${country.name}</strong><br>Cases: ${country.cases[2025]}`);
             markers[country.name] = { marker: marker, cases: country.cases };
-        });
 
-        // Add click event to update chart for a specific country
-        marker.on('click', function () {
-            updateTimeSeriesChart(`Cases for ${countryName}`, countryCases);
+            // Add click event to update chart for a specific country
+            marker.on('click', function () {
+                updateTimeSeriesChart(`Cases for ${country.name}`, country.cases);
+            });
         });
 
         // Calculate totalCasesByYear AFTER markers are populated
-
         for (var country in markers) {
             for (var year in markers[country].cases) {
                 totalCasesByYear[year] = (totalCasesByYear[year] || 0) + markers[country].cases[year];
