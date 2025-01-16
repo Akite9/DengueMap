@@ -43,15 +43,16 @@ var timeSeriesChart = new Chart(ctx, {
     }
 });
 
-function updateTimeSeriesChart(casesByYear) {
-    // Reset chart data
+function updateTimeSeriesChart(label, casesByYear) {
+    // Clear existing chart data
     timeSeriesChart.data.labels = [];
     timeSeriesChart.data.datasets[0].data = [];
+    timeSeriesChart.data.datasets[0].label = label;
 
     // Sort years and update labels and data
     const sortedYears = Object.keys(casesByYear).sort((a, b) => a - b);
     sortedYears.forEach(year => {
-        timeSeriesChart.data.labels.push(`${year}-01-01`); // Convert year to a valid date
+        timeSeriesChart.data.labels.push(`${year}-01-01`); // Convert year to ISO date string
         timeSeriesChart.data.datasets[0].data.push(casesByYear[year]);
     });
 
@@ -61,6 +62,7 @@ function updateTimeSeriesChart(casesByYear) {
 
 // Fetch and display data
 var markers = {};
+var totalCasesByYear = {};
 fetch('data/dengue_cases.json')
     .then(response => response.json())
     .then(data => {
@@ -71,8 +73,13 @@ fetch('data/dengue_cases.json')
             markers[country.name] = { marker: marker, cases: country.cases };
         });
 
+        // Add click event to update chart for a specific country
+        marker.on('click', function () {
+            updateTimeSeriesChart(`Cases for ${countryName}`, countryCases);
+        });
+
         // Calculate totalCasesByYear AFTER markers are populated
-        var totalCasesByYear = {};
+
         for (var country in markers) {
             for (var year in markers[country].cases) {
                 totalCasesByYear[year] = (totalCasesByYear[year] || 0) + markers[country].cases[year];
@@ -80,7 +87,7 @@ fetch('data/dengue_cases.json')
         }
 
         // Update the time-series chart
-        updateTimeSeriesChart(totalCasesByYear);
+        updateTimeSeriesChart('Total cases', totalCasesByYear);
     });
 
 // Time slider interactivity
@@ -97,4 +104,8 @@ timeSlider.addEventListener('input', function () {
         var newContent = `<strong>${markerId}</strong><br>Cases: ${markerData.cases[currentYear]}`;
         markerData.marker.getPopup().setContent(newContent); // Update popup content
     }
+});
+
+document.getElementById('reset-chart-button').addEventListener('click', function () {
+    updateTimeSeriesChart('Total cases', totalCasesByYear);
 });
